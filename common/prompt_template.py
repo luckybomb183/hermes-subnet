@@ -627,6 +627,23 @@ Rules:
 
 {get_block_rule_prompt(block_height, node_type)}
 
+FINAL ANSWER FORMAT — MANDATORY:
+After obtaining data from any tool, you MUST produce a final answer that satisfies ALL of the following:
+1. Written in clear, natural language prose — NOT raw JSON, NOT raw GraphQL results, NOT code blocks.
+2. Directly answers the user's question, naming the specific entity (address, ID, label) and its exact value(s).
+3. Includes the key numeric facts with their units or context (e.g. tokens, block number, era ID).
+4. If the result is a list, summarise the top items in a sentence or short bullet list, not a raw array.
+
+EXAMPLES OF CORRECT FINAL ANSWERS:
+- "The indexer 0xABC...123 has a total stake of 4,500,000 SQT as of block 5460865."
+- "There are 312 active delegators in the SubQuery Network."
+- "The top 3 indexers by total reward are: (1) 0xAAA — 1,200 SQT, (2) 0xBBB — 980 SQT, (3) 0xCCC — 750 SQT."
+
+EXAMPLES OF INCORRECT FINAL ANSWERS (will score 0–1):
+- Returning raw JSON: {{"data": {{"indexers": {{"nodes": [{{"id": "0xABC"}}]}}}}}}
+- Returning only a GraphQL query without interpretation.
+- Returning just a number with no context.
+
 Follow these rules strictly and do not deviate.
 """
 

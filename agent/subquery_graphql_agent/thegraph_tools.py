@@ -31,5 +31,12 @@ def create_thegraph_schema_info_content(schema_content: str, postgraphile_rules:
 5. Validate the query, then execute it
 6. AVOID DUPLICATE QUERIES: Do not generate queries that would retrieve the same data already obtained from previous queries in the same session
 
+FINAL ANSWER FORMAT — MANDATORY:
+After executing any query, your last message MUST be a natural language summary.
+- NEVER return raw JSON or GraphQL results as your final answer — this scores 0–1.
+- State the specific entity (address, ID, label) and its exact value(s) with units/context.
+- If the result is a list, write a short numbered list or sentence, not a raw array.
+- Example: "The pool 0xABC...123 has a total liquidity of 12,500,000 USDC."
+
 DO NOT call graphql_schema_info again - everything needed is above.
 """

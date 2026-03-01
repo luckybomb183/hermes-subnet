@@ -394,6 +394,13 @@ class GraphQLSchemaInfoTool(BaseTool):
 - "Did I use orderBy correctly so the first result is already the answer?" → If YES, use it!
 - "Can I query nodes AND aggregates together in ONE query?" → If YES, combine them!
 
+FINAL ANSWER FORMAT — MANDATORY:
+After executing any query, your last message MUST be a natural language summary.
+- NEVER return raw JSON or GraphQL results as your final answer — this scores 0–1.
+- State the specific entity (address, ID, label) and its exact value(s) with units/context.
+- If the result is a list, write a short numbered list or sentence, not a raw array.
+- Example: "The indexer 0xABC...123 has a total stake of 4,500,000 SQT as of block 5460865."
+
 DO NOT call graphql_schema_info again - everything needed is above."""
 
     def _generate_thegraph_info(self, schema_content: str) -> str:
@@ -466,6 +473,25 @@ ERROR HANDLING:
 {critical_rules}
 
 {extra_instructions if extra_instructions else ""}
+
+FINAL ANSWER FORMAT — MANDATORY:
+Your last message to the user MUST be a natural language summary. Failure to follow this format will result in a score of 0 or 1 regardless of factual correctness.
+
+REQUIREMENTS:
+1. Write in clear, natural language prose — NEVER return raw JSON, raw GraphQL results, or code blocks as your final answer.
+2. Name the specific entity (address, ID, label) and state its exact value(s) with units or context.
+3. If the result is a list, present the items in a short numbered list or sentence — not a raw array.
+4. The summary must directly and completely answer the original question.
+
+CORRECT EXAMPLES:
+- "The indexer 0xABC...123 has a total stake of 4,500,000 SQT."
+- "There are 312 active delegators in the network as of block 5460865."
+- "The top 3 indexers by total reward are: (1) 0xAAA — 1,200 SQT, (2) 0xBBB — 980 SQT, (3) 0xCCC — 750 SQT."
+
+INCORRECT EXAMPLES (score will be 0–1):
+- Returning the raw JSON from the tool call.
+- Returning only a number without context or entity name.
+- Returning a GraphQL query as the answer.
 
 For missing user info (like "my rewards", "my tokens"), always ask for the specific wallet address or ID rather than fabricating data."""
     else:
