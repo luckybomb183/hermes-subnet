@@ -221,14 +221,25 @@ class GraphQLAgent:
         if not os.getenv("OPENAI_API_KEY"):
             raise ValueError("OPENAI_API_KEY environment variable is required")
 
-        # Initialize LLM
-        model_name = os.getenv("LLM_MODEL", "google/gemini-3-flash-preview")
+        # Initialize LLM — reads OPENAI_API_BASE so the same OpenRouter key
+        # works for both the outer miner agent and this inner GraphQL agent.
+        model_name = os.getenv("LLM_MODEL", "google/gemini-2.5-flash")
+        openai_api_base = os.getenv("OPENAI_API_BASE", None)
         logger.info(f"Initializing GraphQLAgent with model: {model_name}")
-        self.llm = ChatOpenAI(
+
+        llm_kwargs = dict(
             model=model_name,
+            # temperature=0 produces deterministic GraphQL queries and entity
+            # identification, which directly improves the validator score.
             temperature=0,
-            # extra_body={"thinking": {"type": "disabled"}},
+            # Limit output to keep the inner agent fast; long tool responses
+            # are fine but final summaries should stay under 512 tokens.
+            max_tokens=int(os.getenv("LLM_MAX_TOKENS", "4096")),
         )
+        if openai_api_base:
+            llm_kwargs["openai_api_base"] = openai_api_base
+
+        self.llm = ChatOpenAI(**llm_kwargs)
 
         # Create tools with node type information and authorization header
         headers = {}

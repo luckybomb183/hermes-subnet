@@ -548,16 +548,29 @@ def calculate_token_cost(
     
     # OpenAI pricing per 1M tokens (USD) - updated 2024 pricing
     pricing_table = {
-        "moonshotai/kimi-k2-0905": {"input": 0.6, "output": 2.50},
-        "zai-org/glm-4.6": {"input": 0.60, "output": 2.20, "input_cache": 0.0},
-        "gpt-5-mini": {"input": 0.25, "output": 2.00, "input_cache": 0.025},
-        "gpt-5": {"input": 1.25, "output": 10, "input_cache": 0.125},
-
+        # ── OpenRouter recommended models for miner ──────────────────────────
+        # Gemini 2.5 Flash — recommended default: fast, highly accurate
+        "google/gemini-2.5-flash":             {"input": 0.15,  "output": 0.60,  "input_cache": 0.0},
+        "google/gemini-2.5-flash-preview":     {"input": 0.15,  "output": 0.60,  "input_cache": 0.0},
+        # Gemini 2.5 Pro — best accuracy, higher latency/cost
+        "google/gemini-2.5-pro":               {"input": 1.25,  "output": 10.00, "input_cache": 0.0},
+        "google/gemini-2.5-pro-preview":       {"input": 1.25,  "output": 10.00, "input_cache": 0.0},
+        # Claude Sonnet 4.5 — strong NL output, reliable tool use
+        "anthropic/claude-sonnet-4-5":         {"input": 3.00,  "output": 15.00, "input_cache": 0.30},
+        "anthropic/claude-3.5-sonnet":         {"input": 3.00,  "output": 15.00, "input_cache": 0.30},
+        # Gemini 2.0 Flash — fast fallback
+        "google/gemini-2.0-flash-001":         {"input": 0.10,  "output": 0.40,  "input_cache": 0.0},
+        "google/gemini-2.0-flash":             {"input": 0.10,  "output": 0.40,  "input_cache": 0.0},
+        # Gemini legacy (kept for backwards compat with older .env files)
+        "google/gemini-3-flash-preview":       {"input": 0.15,  "output": 0.60,  "input_cache": 0.0},
+        # ── Previously listed models ─────────────────────────────────────────
+        "moonshotai/kimi-k2-0905":             {"input": 0.6,   "output": 2.50},
+        "zai-org/glm-4.6":                     {"input": 0.60,  "output": 2.20,  "input_cache": 0.0},
+        "gpt-5-mini":                          {"input": 0.25,  "output": 2.00,  "input_cache": 0.025},
+        "gpt-5":                               {"input": 1.25,  "output": 10,    "input_cache": 0.125},
         # for fine tuning
-        "gpt-4.1-mini": {"input": 0.80, "output": 3.20, "input_cache": 0.20},
-
-        "minimax/minimax-m2": {"input": 0.255, "output": 1.02, "input_cache": 0.0},
-
+        "gpt-4.1-mini":                        {"input": 0.80,  "output": 3.20,  "input_cache": 0.20},
+        "minimax/minimax-m2":                  {"input": 0.255, "output": 1.02,  "input_cache": 0.0},
     }
     
     # Get pricing for the model, fallback to default if not found

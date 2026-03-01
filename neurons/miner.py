@@ -545,11 +545,23 @@ class Miner(BaseNeuron):
         current_dir = Path(__file__).parent
         save_project_dir = current_dir.parent / "projects" / self.role
 
-        model = os.environ.get("MINER_LLM_MODEL", "google/gemini-3-flash-preview")
-        self.llm = ChatOpenAI(
+        model = os.environ.get("MINER_LLM_MODEL", "google/gemini-2.5-flash")
+        openai_api_base = os.environ.get("OPENAI_API_BASE", None)
+
+        llm_kwargs = dict(
             model=model,
-            temperature=1
+            # temperature=0 for deterministic, accurate answers — avoids random
+            # phrasing that confuses the validator's LLM scorer.
+            temperature=0,
+            # Cap output tokens so the answer stays concise and fast.
+            # Validators apply a time penalty for slow responses (>80% of
+            # their own ground-truth time → score 0), so speed matters.
+            max_tokens=int(os.environ.get("MINER_LLM_MAX_TOKENS", "2048")),
         )
+        if openai_api_base:
+            llm_kwargs["openai_api_base"] = openai_api_base
+
+        self.llm = ChatOpenAI(**llm_kwargs)
 
         self.agent_manager = AgentManager(
             save_project_dir=Path(save_project_dir),
