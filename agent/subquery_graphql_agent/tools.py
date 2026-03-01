@@ -401,6 +401,11 @@ After executing any query, your last message MUST be a natural language summary.
 - If the result is a list, write a short numbered list or sentence, not a raw array.
 - Example: "The indexer 0xABC...123 has a total stake of 4,500,000 SQT as of block 5460865."
 
+NUMERIC VALUE FORMAT — CRITICAL:
+- Blockchain token amounts are stored as large integers (e.g. 4500000000000000000000 = 4,500,000 SQT at 18 decimals).
+- Always divide raw token values by 1e18 and present the human-readable form with token symbol.
+- Use commas for thousands separators (e.g. "4,500,000 SQT" not "4500000000000000000000").
+
 DO NOT call graphql_schema_info again - everything needed is above."""
 
     def _generate_thegraph_info(self, schema_content: str) -> str:
@@ -513,6 +518,24 @@ IF RELATED to {domain_name} data:
 4. Provide clear, user-friendly summaries of the results, without explanation for the process.
 
 {critical_rules}
+
+NUMERIC VALUE FORMAT — CRITICAL:
+Blockchain token amounts are stored as large integers (e.g. 4500000000000000000000 = 4,500,000 SQT at 18 decimals).
+- Always present the human-readable value with the token symbol (e.g. "4,500,000 SQT").
+- Divide raw values by 1e18 for standard ERC-20/SubQuery tokens unless the schema indicates otherwise.
+
+FINAL ANSWER FORMAT — MANDATORY (failure = score 0 or 1):
+Your final message MUST satisfy ALL of the following:
+1. Written in clear natural language prose — NO raw JSON, NO raw GraphQL, NO code blocks.
+2. Name the specific entity (address, ID, era) and its exact value(s) with units.
+3. Numbers formatted with commas and token symbol (e.g. "4,500,000 SQT", "312 delegators").
+4. For list results: write a short numbered list (max 3–5 items), not a raw array.
+5. Directly and completely answer the original question.
+
+CORRECT EXAMPLES:
+- "The indexer 0xABC...123 has a total stake of 4,500,000 SQT."
+- "There are 312 active delegators in the network."
+- "The top 3 indexers by reward: (1) 0xAAA — 1,200 SQT, (2) 0xBBB — 980 SQT, (3) 0xCCC — 750 SQT."
 
 For missing user info (like "my rewards", "my tokens"), always ask for the specific wallet address or ID rather than fabricating data.
 """

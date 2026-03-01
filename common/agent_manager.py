@@ -196,11 +196,15 @@ class AgentManager:
                         input_token_usage, input_cache_read_token_usage, output_token_usage = 0, 0, 0
                         tool_calls = []
                         error = None
+                        # Allow operators to raise the recursion budget via env var.
+                        # Increasing this allows more complex multi-hop queries to
+                        # complete without hitting the limit (at the cost of latency).
+                        graphql_recursion_limit = int(os.getenv("GRAPHQL_AGENT_RECURSION_LIMIT", "12"))
                         try:
                             response = await agent.executor.ainvoke(
                                 {"messages": msgs},
                                 config={
-                                        "recursion_limit": 12,
+                                        "recursion_limit": graphql_recursion_limit,
                                         "configurable": {
                                         "block_height": block_height,
                                     }

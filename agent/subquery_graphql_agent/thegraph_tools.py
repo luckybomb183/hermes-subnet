@@ -38,5 +38,11 @@ After executing any query, your last message MUST be a natural language summary.
 - If the result is a list, write a short numbered list or sentence, not a raw array.
 - Example: "The pool 0xABC...123 has a total liquidity of 12,500,000 USDC."
 
+NUMERIC VALUE FORMAT — CRITICAL:
+- Token amounts in The Graph are often stored as large integers (e.g. BigInt, BigDecimal).
+- Always present the human-readable value with the token symbol (e.g. "12,500,000 USDC", "1.5 ETH").
+- For ERC-20 tokens with 18 decimals: divide raw value by 1e18. For USDC/USDT (6 decimals): divide by 1e6.
+- Use commas for thousands separators.
+
 DO NOT call graphql_schema_info again - everything needed is above.
 """
